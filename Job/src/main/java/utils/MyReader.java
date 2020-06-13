@@ -4,16 +4,19 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 /**
  * @author Matus Valko
  */
 class MyReader {
 
+    /**
+     * Method reads data from given link
+     * @return buffer with read data if succesful, null if not
+     * @throws IOException if somethings goes wrong while trying to read
+     */
     private String read() throws IOException {
         BufferedReader reader = null;
         try {
@@ -29,23 +32,27 @@ class MyReader {
 
         } catch(IOException e){
             System.out.println("The function has raised an exception " + e);
+            return null;
         }
         finally {
             if (reader != null)
                 reader.close();
         }
-        return null;
     }
 
-    protected JSONObject convert() throws Exception {
+    /**
+     * Converts read text from private method read() into JSONObject
+     * @return JSONObject with data
+     */
+    protected JSONObject convert(){
         try {
             String jsonText = read();
             JSONObject json = new JSONObject(jsonText);
             return json;
         } catch(Exception e){
             System.out.println("The function has raised an exception " + e);
+            return null;
         }
-        return null;
     }
 }
 

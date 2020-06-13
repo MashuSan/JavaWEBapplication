@@ -16,6 +16,7 @@ public class main {
             if (Integer.parseInt(input) < 2003 || Integer.parseInt(input) > 2014)
                 throw new InvalidAttributeValueException();
             parser.printLowestURCountries(input);
+            System.out.println();
             parser.printHighestURCountries(input);
         }catch (InvalidAttributeValueException e){
             System.out.println("Wrong year");

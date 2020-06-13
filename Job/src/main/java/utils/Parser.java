@@ -1,17 +1,13 @@
 package utils;
 
 import objects.Country;
-import utils.MyReader;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.stream.Collectors;
 
 /**
@@ -21,10 +17,11 @@ public class Parser {
     private MyReader reader;
     private JSONObject json;
     private static final int VALUE_OFF_SET = 12;
-    private static final int LAST_COUNTRY_INDEX = 33;
+    private static final String EU_15_COUNTRIES = "EU15";
+    private static final String ALL_COUNTRIES = "OECD";
     private List<Country> countries;
 
-    public Parser() throws Exception {
+    public Parser(){
         reader = new MyReader();
         json = reader.convert();
         countries = new ArrayList<Country>();
@@ -35,10 +32,6 @@ public class Parser {
         return json.getJSONObject("dimension").getJSONObject("year").get("label").toString().split("-")[0];
     }
 
-    private String getEndYear(){
-        return json.getJSONObject("dimension").getJSONObject("year").get("label").toString().split("-")[1];
-    }
-
     private Map<String, Object> getShortNames(){
         return json.getJSONObject("dimension").getJSONObject("area").getJSONObject("category").getJSONObject("index").toMap();
     }
@@ -47,20 +40,22 @@ public class Parser {
         return json.getJSONObject("dimension").getJSONObject("area").getJSONObject("category").getJSONObject("label").toMap();
     }
 
-    private List getValues(){
+    private List<Object> getValues(){
         return json.getJSONArray("value").toList();
     }
 
-
+    /**
+     * Parses input from json into Country objects
+     */
     private void parseInput(){
-        var shortNames = getShortNames();
-        var longNames = getLongNames();
-        var values = getValues();
+        Map<String, Object> shortNames = getShortNames();
+        Map<String, Object> longNames = getLongNames();
+        List<Object> values = getValues();
         Iterator<Map.Entry<String, Object>> itr = shortNames.entrySet().iterator();
 
         while(itr.hasNext())
         {
-            var entry = itr.next();
+            Map.Entry<String, Object> entry = itr.next();
             Country newCountry = new Country(entry.getKey(), (Integer) entry.getValue());
             newCountry.setName(longNames.get(entry.getKey()).toString());
             for(int pos = newCountry.position * VALUE_OFF_SET; pos < newCountry.position * VALUE_OFF_SET + VALUE_OFF_SET; pos++)
@@ -74,19 +69,20 @@ public class Parser {
     }
 
     public void printLowestURCountries(String year){
+        System.out.println("3 countries with lowest unemployment rate : ");
         try {
-            var lowestCountries = this.countries.stream()
+            Map<String, Object> lowestCountries = this.countries.stream().filter(e -> e.shortName != EU_15_COUNTRIES
+            && e.shortName != ALL_COUNTRIES)
                     .collect(Collectors.toMap(a -> a.shortName, a -> a.values
                             .get(Integer.parseInt(year) - Integer.parseInt(getStartYear()))));
-            var lowest = lowestCountries.values().stream().sorted().limit(3).toArray();
-            for(var low : lowest){
-                for (var pair : lowestCountries.entrySet()){
-                    if (pair.getValue() == low){
+            Object[] lowest = lowestCountries.values().stream().sorted().limit(3).toArray();
+            for(Object low : lowest) {
+                for (Map.Entry<String, Object> pair : lowestCountries.entrySet()) {
+                    if (pair.getValue() == low) {
                         System.out.println(pair.getKey() + " = " + pair.getValue());
                     }
                 }
             }
-
 
         }catch(Exception e){
             System.out.println("Parse exception raised!");
@@ -94,19 +90,20 @@ public class Parser {
     }
 
     public void printHighestURCountries(String year){
+        System.out.println("3 countries with highest unemployment rate : ");
         try {
-            var lowestCountries = this.countries.stream()
+            Map<String, Object> lowestCountries = this.countries.stream().filter(e -> e.shortName != EU_15_COUNTRIES
+                    && e.shortName != ALL_COUNTRIES)
                     .collect(Collectors.toMap(a -> a.shortName, a -> a.values
                             .get(Integer.parseInt(year) - Integer.parseInt(getStartYear()))));
-            var lowest = lowestCountries.values().stream().sorted(Collections.reverseOrder()).limit(3).toArray();
-            for(var low : lowest){
-                for (var pair : lowestCountries.entrySet()){
-                    if (pair.getValue() == low){
+            Object[] highest = lowestCountries.values().stream().sorted(Collections.reverseOrder()).limit(3).toArray();
+            for(Object high : highest){
+                for (Map.Entry<String, Object> pair : lowestCountries.entrySet()){
+                    if (pair.getValue() == high){
                         System.out.println(pair.getKey() + " = " + pair.getValue());
                     }
                 }
             }
-
 
         }catch(Exception e){
             System.out.println("Parse exception raised!");
