@@ -2,30 +2,27 @@
  * @author Matus Valko
  */
 
-import objects.Country;
-import objects.MyReader;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import utils.Parser;
 
-import java.io.IOException;
-import java.net.URL;
+import javax.management.InvalidAttributeValueException;
+import java.util.Scanner;
 
 public class main {
-    public static void main(String[] args) throws Exception {
-
-        MyReader reader = new MyReader();
-        JSONObject json = reader.convert();
-        JSONArray array = json.getJSONArray("value");
-        System.out.println(reader.read());
-        String[] yearSpan = json.getJSONObject("dimension").getJSONObject("year").get("label").toString().split("-");
-        Country country;
-        for (int i = Integer.parseInt(yearSpan[0]); i <= Integer.parseInt(yearSpan[1]); i++){
-            int pointer = 0;
-
+    public static void main(String[] args){
+        System.out.println("Write a year from 2003 to 2014 to check highest and lowest unemployment rate = ");
+        try(Scanner scan = new Scanner(System.in)){
+            Parser parser = new Parser();
+            String input = scan.nextLine();
+            if (Integer.parseInt(input) < 2003 || Integer.parseInt(input) > 2014)
+                throw new InvalidAttributeValueException();
+            parser.printLowestURCountries(input);
+            parser.printHighestURCountries(input);
+        }catch (InvalidAttributeValueException e){
+            System.out.println("Wrong year");
         }
-        country = new Country(12, Integer.parseInt(yearSpan[0]), Integer.parseInt(yearSpan[1]), null);
-        System.out.println(country.getStartingYear());
-
+        catch(Exception e){
+            System.out.println("An exception occurred");
+        }
 
     }
 }

@@ -1,4 +1,4 @@
-package objects;
+package utils;
 
 import org.json.JSONObject;
 
@@ -12,8 +12,9 @@ import java.nio.charset.Charset;
 /**
  * @author Matus Valko
  */
-public class MyReader {
-    public String read() throws IOException {
+class MyReader {
+
+    private String read() throws IOException {
         BufferedReader reader = null;
         try {
             URL url = new URL("https://json-stat.org/samples/oecd.json");
@@ -27,7 +28,7 @@ public class MyReader {
             return buffer.toString();
 
         } catch(IOException e){
-
+            System.out.println("The function has raised an exception " + e);
         }
         finally {
             if (reader != null)
@@ -36,12 +37,14 @@ public class MyReader {
         return null;
     }
 
-    public JSONObject convert() throws Exception {
+    protected JSONObject convert() throws Exception {
         try {
             String jsonText = read();
             JSONObject json = new JSONObject(jsonText);
             return json;
-        } catch(Exception ex){}
+        } catch(Exception e){
+            System.out.println("The function has raised an exception " + e);
+        }
         return null;
     }
 }
