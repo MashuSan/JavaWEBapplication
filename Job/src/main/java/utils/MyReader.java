@@ -1,19 +1,23 @@
-package objects;
+package utils;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 /**
  * @author Matus Valko
  */
-public class MyReader {
-    public String read() throws IOException {
+class MyReader {
+
+    /**
+     * Method reads data from given link
+     * @return buffer with read data if succesful, null if not
+     * @throws IOException if somethings goes wrong while trying to read
+     */
+    private String read() throws IOException {
         BufferedReader reader = null;
         try {
             URL url = new URL("https://json-stat.org/samples/oecd.json");
@@ -27,22 +31,28 @@ public class MyReader {
             return buffer.toString();
 
         } catch(IOException e){
-
+            System.out.println("The function has raised an exception " + e);
+            return null;
         }
         finally {
             if (reader != null)
                 reader.close();
         }
-        return null;
     }
 
-    public JSONObject convert() throws Exception {
+    /**
+     * Converts read text from private method read() into JSONObject
+     * @return JSONObject with data
+     */
+    protected JSONObject convert(){
         try {
             String jsonText = read();
             JSONObject json = new JSONObject(jsonText);
             return json;
-        } catch(Exception ex){}
-        return null;
+        } catch(Exception e){
+            System.out.println("The function has raised an exception " + e);
+            return null;
+        }
     }
 }
 
