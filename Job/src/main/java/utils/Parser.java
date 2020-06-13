@@ -71,10 +71,11 @@ public class Parser {
     public void printLowestURCountries(String year){
         System.out.println("3 countries with lowest unemployment rate : ");
         try {
-            Map<String, Object> lowestCountries = this.countries.stream().filter(e -> e.shortName != EU_15_COUNTRIES
-            && e.shortName != ALL_COUNTRIES)
+            Map<String, Object> lowestCountries = this.countries.stream()
+                    .filter(e -> !e.shortName.equals(EU_15_COUNTRIES) && !e.shortName.equals(ALL_COUNTRIES))
                     .collect(Collectors.toMap(a -> a.shortName, a -> a.values
                             .get(Integer.parseInt(year) - Integer.parseInt(getStartYear()))));
+
             Object[] lowest = lowestCountries.values().stream().sorted().limit(3).toArray();
             for(Object low : lowest) {
                 for (Map.Entry<String, Object> pair : lowestCountries.entrySet()) {
@@ -92,8 +93,8 @@ public class Parser {
     public void printHighestURCountries(String year){
         System.out.println("3 countries with highest unemployment rate : ");
         try {
-            Map<String, Object> lowestCountries = this.countries.stream().filter(e -> e.shortName != EU_15_COUNTRIES
-                    && e.shortName != ALL_COUNTRIES)
+            Map<String, Object> lowestCountries = this.countries.stream()
+                    .filter(e -> !e.shortName.equals(EU_15_COUNTRIES) && !e.shortName.equals(ALL_COUNTRIES))
                     .collect(Collectors.toMap(a -> a.shortName, a -> a.values
                             .get(Integer.parseInt(year) - Integer.parseInt(getStartYear()))));
             Object[] highest = lowestCountries.values().stream().sorted(Collections.reverseOrder()).limit(3).toArray();
